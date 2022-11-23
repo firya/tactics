@@ -8,6 +8,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import type { PropType } from "vue";
+
+import type { IactionButton } from "@/components/ActionButton.vue";
+
 import ActionButton from "@/components/ActionButton.vue";
 
 export default defineComponent({
@@ -17,7 +21,7 @@ export default defineComponent({
   },
   props: {
     buttons: {
-      type: Array,
+      type: Array as PropType<IactionButton[]>,
       required: true,
     },
   },

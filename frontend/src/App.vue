@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import type { IactionButton } from "@/components/ActionButton.vue";
 
 import GridBlock from "@/components/GridBlock.vue";
 import GridBlockSettings from "@/components/GridBlockSettings.vue";
@@ -72,7 +73,7 @@ export default defineComponent({
         this.$store.state.selectedTile[1]
       ].height;
     },
-    popupButtons() {
+    popupButtons(): IactionButton[] {
       return [
         {
           icon: IconArrowDown,
@@ -86,7 +87,7 @@ export default defineComponent({
         },
       ];
     },
-    generateButton() {
+    generateButton(): IactionButton {
       return {
         action: () => this.$store.commit("updateTerrain"),
         text: "Generate random terrain",

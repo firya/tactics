@@ -1,5 +1,8 @@
 <template>
-  <div :class="`${$style.item} ${activeClass}`" @click="clickHandle">
+  <div
+    :class="[$style.item, isActive ? $style.active : '']"
+    @click="clickHandle"
+  >
     <div :class="`terrain ${$style.terrain} ${selectedTileObject.terrain}`">
       <div
         :class="`object ${$style.object} ${object.value}`"
@@ -31,10 +34,8 @@ export default defineComponent({
             this.$store.state.selectedTile[1]
           ];
     },
-    activeClass(): string {
-      return this.selectedTileObject.object === this.object.value
-        ? this.$style.active
-        : "";
+    isActive(): boolean {
+      return this.selectedTileObject.object === this.object.value;
     },
   },
   methods: {

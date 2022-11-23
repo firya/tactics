@@ -1,6 +1,11 @@
 <template>
   <div
-    :class="`${$style.wrapper} ${selectedClass} ${showGridClass}`"
+    :class="[
+      $style.wrapper,
+      isGrid ? $style.grid : '',
+      isActive ? $style.selected : '',
+      isHighlighted ? $style.highlighted : '',
+    ]"
     @click="clickHandle"
     ref="wrapper"
   >
@@ -47,7 +52,7 @@ export default defineComponent({
           )
         : 0;
     },
-    isHighlited() {
+    isHighlighted() {
       if (!this.$store.state.selectedTile || this.isActive) {
         return false;
       } else {
@@ -57,14 +62,8 @@ export default defineComponent({
         );
       }
     },
-    showGridClass(): string {
-      return this.$store.state.showGrid ? this.$style.grid : "";
-    },
-    selectedClass(): string {
-      let classArr = [];
-      if (this.isActive) classArr.push(this.$style.selected);
-      if (this.isHighlited) classArr.push(this.$style.highlighted);
-      return classArr.join(" ");
+    isGrid(): string {
+      return this.$store.state.showGrid;
     },
   },
   methods: {

@@ -9,12 +9,20 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import type { PropType } from "vue";
+
+export interface IactionButton {
+  label?: string;
+  icon?: string;
+  text?: string;
+  action: () => void;
+}
 
 export default defineComponent({
   name: "ActionButton",
   props: {
     data: {
-      type: Object,
+      type: Object as PropType<IactionButton>,
       required: true,
     },
   },
