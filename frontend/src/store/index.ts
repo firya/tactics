@@ -82,6 +82,8 @@ export type TerrainObjects = typeof objectsArr[number];
 
 export type TileType = [number, number];
 
+export type RadiusType = 1 | 2 | 3 | 4;
+
 export interface Itile {
   terrain: Terrain | "";
   height: 0 | 1 | 2 | 3;
@@ -92,7 +94,7 @@ export interface State {
   field: Itile[][];
   showGrid: boolean;
   selectedTile: TileType | null;
-  selectedRadius: 1 | 2 | 3 | 4;
+  selectedRadius: RadiusType;
   selectedTileElement: HTMLElement | null;
 }
 
@@ -159,6 +161,9 @@ const store = createStore<State>({
     ) {
       const [x, y] = payload.tile;
       state.field[x][y].object = payload.object;
+    },
+    changeRadius(state, payload: RadiusType) {
+      state.selectedRadius = payload;
     },
   },
 });
