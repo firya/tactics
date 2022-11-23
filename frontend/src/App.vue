@@ -27,6 +27,8 @@ import ActionButton from "@/components/ActionButton.vue";
 
 import IconArrowDown from "@/assets/icon-arrow-down.svg";
 import IconArrowUp from "@/assets/icon-arrow-up.svg";
+import IconExpand from "@/assets/icon-expand.svg";
+import IconReduce from "@/assets/icon-reduce.svg";
 
 export default defineComponent({
   name: "App",
@@ -34,6 +36,8 @@ export default defineComponent({
     return {
       IconArrowDown,
       IconArrowUp,
+      IconExpand,
+      IconReduce,
     };
   },
   components: {
@@ -84,6 +88,16 @@ export default defineComponent({
           icon: IconArrowUp,
           action: () => this.$store.commit("increaseTileHeight"),
           label: "Increase height",
+        },
+        {
+          icon: IconExpand,
+          action: () => this.$store.commit("increaseRadius"),
+          label: "Expand radius",
+        },
+        {
+          icon: IconReduce,
+          action: () => this.$store.commit("decreaseRadius"),
+          label: "Narrow radius",
         },
       ];
     },
