@@ -8,8 +8,10 @@
     >
       <actions-popup :buttons="buttons"></actions-popup>
     </div>
-    <button class="update" @click="updateTerrain">Update Terrain</button>
-    <!-- <grid-block-settings></grid-block-settings> -->
+    <button class="update" @click="updateTerrain">
+      Generate random terrain
+    </button>
+    <grid-block-settings></grid-block-settings>
   </div>
 </template>
 
@@ -95,7 +97,8 @@ export default defineComponent({
   height: 100%;
   display: grid;
   justify-content: center;
-  grid-template: 1fr 100px / 1fr;
+  grid-template: 1fr 128px / 1fr;
+  overflow: hidden;
 }
 .popup {
   position: absolute;
