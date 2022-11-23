@@ -2,6 +2,7 @@
   <div
     :class="`${$style.wrapper} ${selectedClass} ${showGridClass}`"
     @click="clickHandle"
+    ref="wrapper"
   >
     <div :class="$style.outline"></div>
     <div
@@ -28,34 +29,32 @@ export default defineComponent({
     coords() {
       return this.tile.id.split("_").map(Number);
     },
-    selectedTile() {
+    isActive() {
       if (!this.$store.state.selectedTile) {
-        return [null, null];
+        return false;
       } else {
-        return [
-          this.$store.state.selectedTile[0],
-          this.$store.state.selectedTile[1],
-        ];
+        return (
+          this.coords[0] === this.$store.state.selectedTile[0] &&
+          this.coords[1] === this.$store.state.selectedTile[1]
+        );
       }
     },
     showGridClass(): string {
       return this.$store.state.showGrid ? this.$style.grid : "";
     },
     selectedClass(): string {
-      return this.coords[0] === this.selectedTile[0] &&
-        this.coords[1] === this.selectedTile[1]
-        ? this.$style.selected
-        : "";
+      return this.isActive ? this.$style.selected : "";
     },
   },
   methods: {
     clickHandle() {
-      const [row, col] = this.coords;
-      const [selectedRow, selectedCol] = this.selectedTile;
-      if (selectedRow === row && selectedCol === col) {
+      if (this.isActive) {
         this.$store.commit("deselectTile");
       } else {
-        this.$store.commit("selectTile", [row, col]);
+        this.$store.commit("selectTile", {
+          tile: this.coords,
+          element: this.$refs.wrapper,
+        });
       }
     },
   },

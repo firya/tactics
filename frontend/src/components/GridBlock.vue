@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <div :class="$style.grid" :style="cssVars">
+    <div :class="$style.grid" ref="helperGrid" :style="cssVars">
       <div :class="$style.row" v-for="rowData in field">
         <div :class="$style.col" v-for="tile in rowData">
           <grid-block-tile-helper
@@ -62,10 +62,107 @@ export default defineComponent({
         "--grid-height": this.fieldHieght,
       };
     },
+    keyboardObject() {
+      return {
+        move: [
+          {
+            keyCode: "ArrowUp",
+            offset: [-1, 0],
+          },
+          {
+            keyCode: "ArrowDown",
+            offset: [1, 0],
+          },
+          {
+            keyCode: "ArrowLeft",
+            offset: [0, 1],
+          },
+          {
+            keyCode: "ArrowRight",
+            offset: [0, -1],
+          },
+        ],
+        actions: [
+          {
+            keyCode: "KeyZ",
+            action: "decreaseTileHeight",
+          },
+          {
+            keyCode: "KeyX",
+            action: "increaseTileHeight",
+          },
+          {
+            keyCode: "Escape",
+            action: "deselectTile",
+          },
+        ],
+      };
+    },
+  },
+  created() {
+    window.addEventListener("keydown", this.keyboardhandler);
+  },
+  destroyed() {
+    window.removeEventListener("keydown", this.keyboardhandler);
   },
   methods: {
     toggleGridHandler() {
       this.$store.commit("toggleGrid");
+    },
+    getHTMLelement(tile: [number, number]) {
+      const helperGridWrapper = this.$refs.helperGrid as HTMLElement;
+
+      return helperGridWrapper.children[tile[0]].children[tile[1]];
+    },
+    keyboardhandler(e: KeyboardEvent) {
+      if (
+        [...this.keyboardObject.move, ...this.keyboardObject.actions].some(
+          (key) => key.keyCode === e.code
+        )
+      ) {
+        e.preventDefault();
+
+        if (this.keyboardObject.move.some((key) => key.keyCode === e.code)) {
+          const offset = this.keyboardObject.move.find(
+            (key) => key.keyCode === e.code
+          )?.offset;
+
+          if (offset) {
+            let tile = !this.$store.state.selectedTile
+              ? [0, 0]
+              : this.$store.state.selectedTile;
+            tile = [tile[0] + offset[0], tile[1] + offset[1]];
+            tile[0] =
+              tile[0] > this.$store.state.gridSize - 1
+                ? this.$store.state.gridSize - 1
+                : tile[0] < 0
+                ? 0
+                : tile[0];
+            tile[1] =
+              tile[1] > this.$store.state.gridSize - 1
+                ? this.$store.state.gridSize - 1
+                : tile[1] < 0
+                ? 0
+                : tile[1];
+
+            this.$store.commit("selectTile", {
+              tile,
+              element: this.getHTMLelement(tile),
+            });
+          }
+        } else if (
+          this.$store.state.selectedTile &&
+          this.keyboardObject.actions.some((key) => key.keyCode === e.code)
+        ) {
+          const action = this.keyboardObject.actions.find(
+            (key) => key.keyCode === e.code
+          )?.action;
+
+          if (action) {
+            this.$store.commit(action);
+          }
+        }
+      }
     },
   },
 });

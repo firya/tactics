@@ -1,6 +1,7 @@
 import type { InjectionKey } from "vue";
 import { createStore, useStore as baseUseStore, Store } from "vuex";
 
+const defaultGridSize = 8;
 const terrainArr = [
   "e1",
   "e2",
@@ -24,55 +25,77 @@ const terrainArr = [
 ] as const;
 export type Terrain = typeof terrainArr[number];
 
+export type SelectedTile = [number, number];
+
 export interface Itile {
   terrain: Terrain | "";
   height: 0 | 1 | 2 | 3;
 }
 export interface State {
+  gridSize: number;
   field: Itile[][];
   showGrid: boolean;
-  selectedTile: [number, number] | null;
+  selectedTile: SelectedTile | null;
+  selectedTileElement: HTMLElement | null;
 }
 
 export const key: InjectionKey<Store<State>> = Symbol();
 
+const generateTerrain = (size: number): Itile[][] => {
+  return Array.from({ length: size }, (_, i) =>
+    Array.from({ length: size }, (_, j) => ({
+      id: `${i}_${j}`,
+      terrain: terrainArr[
+        Math.floor(Math.random() * terrainArr.length)
+      ] as Itile["terrain"],
+      height: Math.round(Math.random() * 3) as Itile["height"],
+    }))
+  );
+};
+
 const store = createStore<State>({
   state() {
     return {
-      showGrid: true,
+      gridSize: defaultGridSize,
+      showGrid: false,
       selectedTile: null,
-      field: Array.from({ length: 8 }, (_, i) =>
-        Array.from({ length: 8 }, (_, j) => ({
-          id: `${i}_${j}`,
-          terrain: terrainArr[
-            Math.floor(Math.random() * terrainArr.length)
-          ] as Itile["terrain"],
-          height: 0, //Math.round(Math.random() * 3) as Itile["height"],
-        }))
-      ),
+      selectedTileElement: null,
+      field: generateTerrain(defaultGridSize),
     };
   },
   mutations: {
     toggleGrid(state) {
       state.showGrid = !state.showGrid;
     },
-    selectTile(state, payload: [number, number]) {
-      state.selectedTile = payload;
+    selectTile(
+      state,
+      payload: { tile: [number, number]; element: HTMLElement }
+    ) {
+      state.selectedTile = payload.tile;
+      state.selectedTileElement = payload.element;
     },
     deselectTile(state) {
       state.selectedTile = null;
+      state.selectedTileElement = null;
     },
     increaseTileHeight(state) {
       if (state.selectedTile) {
         const [x, y] = state.selectedTile;
-        state.field[x][y].height++;
+        if (state.field[x][y].height < 10) {
+          state.field[x][y].height++;
+        }
       }
     },
     decreaseTileHeight(state) {
       if (state.selectedTile) {
         const [x, y] = state.selectedTile;
-        state.field[x][y].height--;
+        if (state.field[x][y].height > 0) {
+          state.field[x][y].height--;
+        }
       }
+    },
+    updateTerrain(state) {
+      state.field = generateTerrain(state.gridSize);
     },
   },
 });

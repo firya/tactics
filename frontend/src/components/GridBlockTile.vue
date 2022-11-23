@@ -13,6 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+
 export default defineComponent({
   name: "GridBlockTile",
   props: {
@@ -24,6 +25,19 @@ export default defineComponent({
   computed: {
     realHeight() {
       return this.tile.height + 4;
+    },
+    coords() {
+      return this.tile.id.split("_").map(Number);
+    },
+    isActive() {
+      if (!this.$store.state.selectedTile) {
+        return false;
+      } else {
+        return (
+          this.coords[0] === this.$store.state.selectedTile[0] &&
+          this.coords[1] === this.$store.state.selectedTile[1]
+        );
+      }
     },
   },
 });
@@ -41,6 +55,13 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   scale: 1.4142135623;
+}
+.popup {
+  position: absolute;
+  z-index: 100;
+  bottom: -100%;
+  left: 50%;
+  translate: -50% 0;
 }
 .terrain {
   position: absolute;
