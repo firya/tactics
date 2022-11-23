@@ -6,20 +6,23 @@
       v-if="isPopupVisible"
       :style="`left: ${popupPosition!.left + popupPosition!.width/2}px; top: ${popupPosition!.top - selectedTileHeight*16}px`"
     >
-      <actions-popup :buttons="buttons"></actions-popup>
+      <actions-popup :buttons="popupButtons"></actions-popup>
     </div>
-    <button class="update" @click="updateTerrain">
-      Generate random terrain
-    </button>
+    <div class="generate">
+      <action-button :data="generateButton"></action-button>
+    </div>
+
     <grid-block-settings></grid-block-settings>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+
 import GridBlock from "@/components/GridBlock.vue";
 import GridBlockSettings from "@/components/GridBlockSettings.vue";
 import ActionsPopup from "@/components/ActionsPopup.vue";
+import ActionButton from "@/components/ActionButton.vue";
 
 import IconArrowDown from "@/assets/icon-arrow-down.svg";
 import IconArrowUp from "@/assets/icon-arrow-up.svg";
@@ -36,6 +39,7 @@ export default defineComponent({
     GridBlock,
     GridBlockSettings,
     ActionsPopup,
+    ActionButton,
   },
   data() {
     return {
@@ -68,7 +72,7 @@ export default defineComponent({
         this.$store.state.selectedTile[1]
       ].height;
     },
-    buttons() {
+    popupButtons() {
       return [
         {
           icon: IconArrowDown,
@@ -81,6 +85,12 @@ export default defineComponent({
           label: "Increase height",
         },
       ];
+    },
+    generateButton() {
+      return {
+        action: () => this.$store.commit("updateTerrain"),
+        text: "Generate random terrain",
+      };
     },
   },
   methods: {
@@ -104,19 +114,9 @@ export default defineComponent({
   position: absolute;
   translate: -50% calc(-100% - 32px);
 }
-.update {
+.generate {
   position: absolute;
-  background-color: rgb(240, 236, 228);
-  border-radius: 5px;
-  border: 1px solid #666;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  padding: 10px;
   right: 20px;
   top: 20px;
-  cursor: pointer;
-  transition: boxShadow 0.2s ease-in-out;
-}
-.update:hover {
-  box-shadow: 0 0 0px rgba(0, 0, 0, 0);
 }
 </style>

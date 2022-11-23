@@ -2,6 +2,8 @@ import type { InjectionKey } from "vue";
 import { createStore, useStore as baseUseStore, Store } from "vuex";
 
 const defaultGridSize = 8;
+const maxHeight = 10;
+
 const terrainArr = [
   "e1",
   "e2",
@@ -82,7 +84,7 @@ export type TerrainObjects = typeof objectsArr[number];
 
 export type TileType = [number, number];
 
-export type RadiusType = 1 | 2 | 3 | 4;
+export type RadiusType = 0 | 1 | 2 | 3 | 4;
 
 export interface Itile {
   terrain: Terrain | "";
@@ -107,10 +109,59 @@ const generateTerrain = (size: number, random: boolean = false): Itile[][] => {
       terrain: terrainArr[
         Math.floor(Math.random() * terrainArr.length)
       ] as Itile["terrain"],
-      object: "", //objectsArr[Math.floor(Math.random() * objectsArr.length)] as Itile["object"],
+      object:
+        Math.random() > 0.8
+          ? (objectsArr[
+              Math.floor(Math.random() * objectsArr.length)
+            ] as Itile["object"])
+          : "",
       height: random ? (Math.round(Math.random() * 3) as Itile["height"]) : 0,
     }))
   );
+};
+
+const changeTileHeight = (state: State, payload: { change: number }) => {
+  if (state.selectedTile) {
+    const [x, y] = state.selectedTile;
+    if (state.selectedRadius == 0) {
+      if (
+        state.field[x][y].height + payload.change <= maxHeight &&
+        state.field[x][y].height + payload.change >= 0
+      ) {
+        state.field[x][y].height += payload.change;
+      }
+    } else {
+      for (
+        let i = x - state.selectedRadius;
+        i <= x + state.selectedRadius;
+        i++
+      ) {
+        for (
+          let j = y - state.selectedRadius;
+          j <= y + state.selectedRadius;
+          j++
+        ) {
+          if (
+            state.field[i] &&
+            state.field[i][j] &&
+            state.field[i][j].height + payload.change <= maxHeight &&
+            state.field[i][j].height + payload.change >= 0
+          ) {
+            const distance = Math.ceil(
+              Math.sqrt(
+                Math.pow(i - state.selectedTile[0], 2) +
+                  Math.pow(j - state.selectedTile[1], 2)
+              )
+            );
+
+            if (distance - 1 < state.selectedRadius) {
+              state.field[i][j].height += payload.change;
+            }
+          }
+        }
+      }
+    }
+  }
 };
 
 const store = createStore<State>({
@@ -119,7 +170,7 @@ const store = createStore<State>({
       gridSize: defaultGridSize,
       showGrid: false,
       selectedTile: null,
-      selectedRadius: 1,
+      selectedRadius: 0,
       selectedTileElement: null,
       field: generateTerrain(defaultGridSize),
     };
@@ -137,20 +188,10 @@ const store = createStore<State>({
       state.selectedTileElement = null;
     },
     increaseTileHeight(state) {
-      if (state.selectedTile) {
-        const [x, y] = state.selectedTile;
-        if (state.field[x][y].height < 10) {
-          state.field[x][y].height++;
-        }
-      }
+      changeTileHeight(state, { change: 1 });
     },
     decreaseTileHeight(state) {
-      if (state.selectedTile) {
-        const [x, y] = state.selectedTile;
-        if (state.field[x][y].height > 0) {
-          state.field[x][y].height--;
-        }
-      }
+      changeTileHeight(state, { change: -1 });
     },
     updateTerrain(state) {
       state.field = generateTerrain(state.gridSize, true);
@@ -162,8 +203,17 @@ const store = createStore<State>({
       const [x, y] = payload.tile;
       state.field[x][y].object = payload.object;
     },
-    changeRadius(state, payload: RadiusType) {
-      state.selectedRadius = payload;
+    increaseRadius(state) {
+      state.selectedRadius =
+        state.selectedRadius > 3
+          ? 4
+          : ((state.selectedRadius + 1) as RadiusType);
+    },
+    decreaseRadius(state) {
+      state.selectedRadius =
+        state.selectedRadius < 1
+          ? 0
+          : ((state.selectedRadius - 1) as RadiusType);
     },
   },
 });

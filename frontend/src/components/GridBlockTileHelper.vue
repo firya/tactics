@@ -39,11 +39,32 @@ export default defineComponent({
         );
       }
     },
+    distanceToSelected() {
+      return this.$store.state.selectedTile
+        ? Math.sqrt(
+            Math.pow(this.coords[0] - this.$store.state.selectedTile[0], 2) +
+              Math.pow(this.coords[1] - this.$store.state.selectedTile[1], 2)
+          )
+        : 0;
+    },
+    isHighlited() {
+      if (!this.$store.state.selectedTile || this.isActive) {
+        return false;
+      } else {
+        return (
+          Math.ceil(this.distanceToSelected) - 1 <
+          this.$store.state.selectedRadius
+        );
+      }
+    },
     showGridClass(): string {
       return this.$store.state.showGrid ? this.$style.grid : "";
     },
     selectedClass(): string {
-      return this.isActive ? this.$style.selected : "";
+      let classArr = [];
+      if (this.isActive) classArr.push(this.$style.selected);
+      if (this.isHighlited) classArr.push(this.$style.highlighted);
+      return classArr.join(" ");
     },
   },
   methods: {
@@ -88,5 +109,8 @@ export default defineComponent({
 }
 .selected .outline {
   border: 5px solid rgba(255, 168, 92, 1);
+}
+.highlighted .outline {
+  background-color: rgba(255, 168, 92, 0.3);
 }
 </style>

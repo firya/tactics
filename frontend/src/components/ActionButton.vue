@@ -1,8 +1,9 @@
 <template>
   <button :class="$style.wrapper" @click="clickHandler">
-    <span :class="$style.icon"
+    <span :class="$style.icon" v-if="data.icon"
       ><img :class="$style.img" :src="data.icon" :alt="data.label"
     /></span>
+    <span :class="$style.text" v-if="data.text">{{ data.text }}</span>
   </button>
 </template>
 
@@ -10,7 +11,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "ActionsPopupButton",
+  name: "ActionButton",
   props: {
     data: {
       type: Object,
@@ -27,6 +28,11 @@ export default defineComponent({
 
 <style module>
 .wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  cursor: pointer;
 }
 .icon {
   display: block;
@@ -38,5 +44,7 @@ export default defineComponent({
   width: 20px;
   height: 20px;
   vertical-align: top;
+}
+.text {
 }
 </style>

@@ -92,6 +92,14 @@ export default defineComponent({
             action: "increaseTileHeight",
           },
           {
+            keyCode: "BracketRight",
+            action: "increaseRadius",
+          },
+          {
+            keyCode: "BracketLeft",
+            action: "decreaseRadius",
+          },
+          {
             keyCode: "Escape",
             action: "deselectTile",
           },

@@ -1,19 +1,19 @@
 <template>
   <div :class="$style.wrapper">
     <div :class="button" v-for="button in buttons">
-      <action-popup-button :data="button" />
+      <action-button :data="button" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ActionPopupButton from "@/components/ActionPopupButton.vue";
+import ActionButton from "@/components/ActionButton.vue";
 
 export default defineComponent({
   name: "ActionsPopup",
   components: {
-    ActionPopupButton,
+    ActionButton,
   },
   props: {
     buttons: {
