@@ -67,7 +67,9 @@ export default defineComponent({
     },
   },
   methods: {
-    clickHandle() {
+    clickHandle(e: MouseEvent) {
+      e.stopPropagation();
+
       if (this.isActive) {
         this.$store.commit("deselectTile");
       } else {

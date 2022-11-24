@@ -164,6 +164,20 @@ const changeTileHeight = (state: State, payload: { change: number }) => {
   }
 };
 
+const getDefaultField = (): Itile[][] => {
+  const storage = localStorage.getItem("field");
+
+  if (storage) {
+    return JSON.parse(storage);
+  } else {
+    return generateTerrain(defaultGridSize);
+  }
+};
+
+const setDefaultField = (field: Itile[][]): void => {
+  localStorage.setItem("field", JSON.stringify(field));
+};
+
 const store = createStore<State>({
   state() {
     return {
@@ -172,7 +186,7 @@ const store = createStore<State>({
       selectedTile: null,
       selectedRadius: 0,
       selectedTileElement: null,
-      field: generateTerrain(defaultGridSize),
+      field: getDefaultField(),
     };
   },
   mutations: {
@@ -189,12 +203,15 @@ const store = createStore<State>({
     },
     increaseTileHeight(state) {
       changeTileHeight(state, { change: 1 });
+      setDefaultField(state.field);
     },
     decreaseTileHeight(state) {
       changeTileHeight(state, { change: -1 });
+      setDefaultField(state.field);
     },
     updateTerrain(state) {
       state.field = generateTerrain(state.gridSize, true);
+      setDefaultField(state.field);
     },
     setTileObject(
       state,

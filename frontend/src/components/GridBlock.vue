@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.wrapper">
+  <div :class="$style.wrapper" @click="clickHandler">
     <input-toggle
       :value="showGrid"
       label="Toggle grid"
@@ -171,6 +171,10 @@ export default defineComponent({
           }
         }
       }
+    },
+    clickHandler(e: MouseEvent) {
+      e.preventDefault();
+      this.$store.commit("deselectTile");
     },
   },
 });
