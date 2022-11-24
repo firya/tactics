@@ -45,6 +45,7 @@ export default defineComponent({
   cursor: pointer;
   appearance: none;
   border: 1px solid #836969;
+  color: #3b2f2f;
   background-color: #e3cfa9;
   -webkit-appearance: none;
 }
