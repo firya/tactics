@@ -1,11 +1,5 @@
 <template>
   <div :class="$style.wrapper" @click="clickHandler">
-    <input-toggle
-      :value="showGrid"
-      label="Toggle grid"
-      @toggleHandler="toggleGridHandler"
-    ></input-toggle>
-
     <div :class="$style.grid" :style="cssVars">
       <div :class="$style.row" v-for="rowData in field">
         <div :class="$style.col" v-for="tile in rowData">
@@ -24,6 +18,12 @@
         </div>
       </div>
     </div>
+
+    <input-toggle
+      :value="showGrid"
+      label="Toggle grid"
+      @toggleHandler="toggleGridHandler"
+    ></input-toggle>
 
     <div :class="$style.generate">
       <action-button :data="generateButton"></action-button>
@@ -161,6 +161,9 @@ export default defineComponent({
     window.removeEventListener("keydown", this.keyboardhandler);
   },
   methods: {
+    clickHandler() {
+      this.$store.commit("deselectTile");
+    },
     toggleGridHandler() {
       this.$store.commit("toggleGrid");
     },
@@ -218,10 +221,6 @@ export default defineComponent({
           }
         }
       }
-    },
-    clickHandler(e: MouseEvent) {
-      e.preventDefault();
-      this.$store.commit("deselectTile");
     },
     updateTerrain() {
       this.$store.commit("updateTerrain");

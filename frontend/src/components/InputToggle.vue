@@ -72,6 +72,7 @@ export default defineComponent({
   display: inline-block;
   width: 60px;
   height: 34px;
+  cursor: pointer;
 }
 .toggler__checkbox {
   opacity: 0;
