@@ -20,7 +20,7 @@ export default defineComponent({
   name: "Hotkeys",
   data() {
     return {
-      isActive: true,
+      isActive: false,
     };
   },
   computed: {
