@@ -24,14 +24,30 @@
         </div>
       </div>
     </div>
+
+    <div
+      :class="$style.popup"
+      v-if="isPopupVisible"
+      :style="`left: ${popupPosition!.left + popupPosition!.width/2}px; top: ${popupPosition!.top - selectedTileHeight*16}px`"
+    >
+      <actions-popup :buttons="popupButtons"></actions-popup>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import type { IactionButton } from "@/components/ActionButton.vue";
+
 import GridBlockTile from "@/components/GridBlockTile.vue";
 import GridBlockTileHelper from "@/components/GridBlockTileHelper.vue";
 import InputToggle from "@/components/InputToggle.vue";
+import ActionsPopup from "@/components/ActionsPopup.vue";
+
+import IconArrowDown from "@/assets/icon-arrow-down.svg";
+import IconArrowUp from "@/assets/icon-arrow-up.svg";
+import IconExpand from "@/assets/icon-expand.svg";
+import IconReduce from "@/assets/icon-reduce.svg";
 
 export default defineComponent({
   name: "GridBlock",
@@ -39,6 +55,15 @@ export default defineComponent({
     GridBlockTile,
     GridBlockTileHelper,
     InputToggle,
+    ActionsPopup,
+  },
+  setup() {
+    return {
+      IconArrowDown,
+      IconArrowUp,
+      IconExpand,
+      IconReduce,
+    };
   },
   data() {
     return {};
@@ -105,6 +130,55 @@ export default defineComponent({
           },
         ],
       };
+    },
+    isPopupVisible() {
+      return !!this.$store.state.selectedTile;
+    },
+    popupPosition() {
+      if (!this.$store.state.selectedTileElement) {
+        return null;
+      }
+      const bodyRect = document.body.getBoundingClientRect();
+      const elementRect =
+        this.$store.state.selectedTileElement.getBoundingClientRect();
+      return {
+        top: elementRect.top - bodyRect.top,
+        left: elementRect.left - bodyRect.left,
+        width: elementRect.width,
+        height: elementRect.height,
+      };
+    },
+    popupButtons(): IactionButton[] {
+      return [
+        {
+          icon: IconArrowDown,
+          action: () => this.$store.commit("decreaseTileHeight"),
+          label: "Decrease height",
+        },
+        {
+          icon: IconArrowUp,
+          action: () => this.$store.commit("increaseTileHeight"),
+          label: "Increase height",
+        },
+        {
+          icon: IconExpand,
+          action: () => this.$store.commit("increaseRadius"),
+          label: "Expand radius",
+        },
+        {
+          icon: IconReduce,
+          action: () => this.$store.commit("decreaseRadius"),
+          label: "Narrow radius",
+        },
+      ];
+    },
+    selectedTileHeight() {
+      if (!this.$store.state.selectedTile) {
+        return 0;
+      }
+      return this.$store.state.field[this.$store.state.selectedTile[0]][
+        this.$store.state.selectedTile[1]
+      ].height;
     },
   },
   created() {
@@ -209,5 +283,10 @@ export default defineComponent({
   grid-template-columns: 1fr;
   align-items: center;
   justify-content: center;
+}
+.popup {
+  position: absolute;
+  translate: -50% calc(-100% - 32px);
+  z-index: 100;
 }
 </style>

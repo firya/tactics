@@ -1,13 +1,6 @@
 <template>
   <div class="app__wrapper">
     <grid-block></grid-block>
-    <div
-      class="popup"
-      v-if="isPopupVisible"
-      :style="`left: ${popupPosition!.left + popupPosition!.width/2}px; top: ${popupPosition!.top - selectedTileHeight*16}px`"
-    >
-      <actions-popup :buttons="popupButtons"></actions-popup>
-    </div>
     <div class="generate">
       <action-button :data="generateButton"></action-button>
     </div>
@@ -22,28 +15,13 @@ import type { IactionButton } from "@/components/ActionButton.vue";
 
 import GridBlock from "@/components/GridBlock.vue";
 import GridBlockSettings from "@/components/GridBlockSettings.vue";
-import ActionsPopup from "@/components/ActionsPopup.vue";
 import ActionButton from "@/components/ActionButton.vue";
-
-import IconArrowDown from "@/assets/icon-arrow-down.svg";
-import IconArrowUp from "@/assets/icon-arrow-up.svg";
-import IconExpand from "@/assets/icon-expand.svg";
-import IconReduce from "@/assets/icon-reduce.svg";
 
 export default defineComponent({
   name: "App",
-  setup() {
-    return {
-      IconArrowDown,
-      IconArrowUp,
-      IconExpand,
-      IconReduce,
-    };
-  },
   components: {
     GridBlock,
     GridBlockSettings,
-    ActionsPopup,
     ActionButton,
   },
   data() {
@@ -52,55 +30,6 @@ export default defineComponent({
     };
   },
   computed: {
-    isPopupVisible() {
-      return !!this.$store.state.selectedTile;
-    },
-    popupPosition() {
-      if (!this.$store.state.selectedTileElement) {
-        return null;
-      }
-      const bodyRect = document.body.getBoundingClientRect();
-      const elementRect =
-        this.$store.state.selectedTileElement.getBoundingClientRect();
-      return {
-        top: elementRect.top - bodyRect.top,
-        left: elementRect.left - bodyRect.left,
-        width: elementRect.width,
-        height: elementRect.height,
-      };
-    },
-    selectedTileHeight() {
-      if (!this.$store.state.selectedTile) {
-        return 0;
-      }
-      return this.$store.state.field[this.$store.state.selectedTile[0]][
-        this.$store.state.selectedTile[1]
-      ].height;
-    },
-    popupButtons(): IactionButton[] {
-      return [
-        {
-          icon: IconArrowDown,
-          action: () => this.$store.commit("decreaseTileHeight"),
-          label: "Decrease height",
-        },
-        {
-          icon: IconArrowUp,
-          action: () => this.$store.commit("increaseTileHeight"),
-          label: "Increase height",
-        },
-        {
-          icon: IconExpand,
-          action: () => this.$store.commit("increaseRadius"),
-          label: "Expand radius",
-        },
-        {
-          icon: IconReduce,
-          action: () => this.$store.commit("decreaseRadius"),
-          label: "Narrow radius",
-        },
-      ];
-    },
     generateButton(): IactionButton {
       return {
         action: () => this.$store.commit("updateTerrain"),
@@ -124,10 +53,6 @@ export default defineComponent({
   justify-content: center;
   grid-template: 1fr 128px / 1fr;
   overflow: hidden;
-}
-.popup {
-  position: absolute;
-  translate: -50% calc(-100% - 32px);
 }
 .generate {
   position: absolute;
