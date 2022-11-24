@@ -27,7 +27,8 @@ export default defineComponent({
     },
   },
   methods: {
-    clickHandler() {
+    clickHandler(e: MouseEvent) {
+      e.preventDefault();
       this.data.action();
     },
   },
