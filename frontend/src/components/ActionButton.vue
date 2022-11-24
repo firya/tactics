@@ -41,7 +41,15 @@ export default defineComponent({
   align-items: center;
   gap: 8px;
   padding: 8px;
+  border-radius: 3px;
   cursor: pointer;
+  appearance: none;
+  border: 1px solid #836969;
+  background-color: #e3cfa9;
+  -webkit-appearance: none;
+}
+.wrapper:hover {
+  background-color: #d4c0a0;
 }
 .icon {
   display: block;
