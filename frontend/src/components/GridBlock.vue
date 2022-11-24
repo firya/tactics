@@ -25,6 +25,10 @@
       </div>
     </div>
 
+    <div :class="$style.generate">
+      <action-button :data="generateButton"></action-button>
+    </div>
+
     <div
       :class="$style.popup"
       v-if="isPopupVisible"
@@ -43,11 +47,14 @@ import GridBlockTile from "@/components/GridBlockTile.vue";
 import GridBlockTileHelper from "@/components/GridBlockTileHelper.vue";
 import InputToggle from "@/components/InputToggle.vue";
 import ActionsPopup from "@/components/ActionsPopup.vue";
+import ActionButton from "@/components/ActionButton.vue";
 
 import IconArrowDown from "@/assets/icon-arrow-down.svg";
 import IconArrowUp from "@/assets/icon-arrow-up.svg";
 import IconExpand from "@/assets/icon-expand.svg";
 import IconReduce from "@/assets/icon-reduce.svg";
+
+import keyboardObj from "@/utils/keyboard";
 
 export default defineComponent({
   name: "GridBlock",
@@ -56,6 +63,7 @@ export default defineComponent({
     GridBlockTileHelper,
     InputToggle,
     ActionsPopup,
+    ActionButton,
   },
   setup() {
     return {
@@ -88,48 +96,7 @@ export default defineComponent({
       };
     },
     keyboardObject() {
-      return {
-        move: [
-          {
-            keyCode: "ArrowUp",
-            offset: [-1, 0],
-          },
-          {
-            keyCode: "ArrowDown",
-            offset: [1, 0],
-          },
-          {
-            keyCode: "ArrowLeft",
-            offset: [0, 1],
-          },
-          {
-            keyCode: "ArrowRight",
-            offset: [0, -1],
-          },
-        ],
-        actions: [
-          {
-            keyCode: "KeyZ",
-            action: "decreaseTileHeight",
-          },
-          {
-            keyCode: "KeyX",
-            action: "increaseTileHeight",
-          },
-          {
-            keyCode: "BracketRight",
-            action: "increaseRadius",
-          },
-          {
-            keyCode: "BracketLeft",
-            action: "decreaseRadius",
-          },
-          {
-            keyCode: "Escape",
-            action: "deselectTile",
-          },
-        ],
-      };
+      return keyboardObj;
     },
     isPopupVisible() {
       return !!this.$store.state.selectedTile;
@@ -179,6 +146,12 @@ export default defineComponent({
       return this.$store.state.field[this.$store.state.selectedTile[0]][
         this.$store.state.selectedTile[1]
       ].height;
+    },
+    generateButton(): IactionButton {
+      return {
+        action: () => this.$store.commit("updateTerrain"),
+        text: "Generate random terrain",
+      };
     },
   },
   created() {
@@ -250,6 +223,9 @@ export default defineComponent({
       e.preventDefault();
       this.$store.commit("deselectTile");
     },
+    updateTerrain() {
+      this.$store.commit("updateTerrain");
+    },
   },
 });
 </script>
@@ -288,5 +264,10 @@ export default defineComponent({
   position: absolute;
   translate: -50% calc(-100% - 32px);
   z-index: 100;
+}
+.generate {
+  position: absolute;
+  right: 20px;
+  top: 20px;
 }
 </style>

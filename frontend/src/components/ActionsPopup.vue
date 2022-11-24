@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.wrapper">
+  <div :class="$style.wrapper" @click="clickHandler">
     <div :class="button" v-for="button in buttons">
       <action-button :data="button" />
     </div>
@@ -23,6 +23,11 @@ export default defineComponent({
     buttons: {
       type: Array as PropType<IactionButton[]>,
       required: true,
+    },
+  },
+  methods: {
+    clickHandler(e: MouseEvent) {
+      e.stopPropagation();
     },
   },
 });
