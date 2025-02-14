@@ -1,0 +1,19 @@
+services:
+  tactics:
+    image: nginx:alpine
+    container_name: tactics
+    restart: unless-stopped
+    volumes:
+      - ./dist:/usr/share/nginx/html
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tactics.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.tactics.tls=true"
+      - "traefik.http.routers.tactics.tls.certresolver=letsencrypt"
+      - "traefik.http.services.tactics.loadbalancer.server.port=80"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
