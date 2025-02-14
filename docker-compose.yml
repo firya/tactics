@@ -4,7 +4,7 @@ services:
     container_name: tactics
     restart: unless-stopped
     volumes:
-      - ./dist:/usr/share/nginx/html
+      - ./frontend/dist:/usr/share/nginx/html
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tactics.rule=Host(`${DOMAIN}`)"
